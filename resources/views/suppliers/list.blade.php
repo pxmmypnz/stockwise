@@ -2,24 +2,30 @@
 
 @section('content')
     <div class="content-toolbar">
-        <p class="muted">Supplier details are available to signed-in staff.</p>
+        <div>
+            <p class="section-kicker">SUPPLY PARTNERS</p>
+            <p class="section-description">Supplier details are available to signed-in staff.</p>
+        </div>
         @can('create', \App\Models\Supplier::class)
-            <a class="button" href="{{ route('suppliers.create-form') }}">Add supplier</a>
+            <a class="button" href="{{ route('suppliers.create-form') }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                Add supplier
+            </a>
         @endcan
     </div>
 
     @if ($suppliers->isEmpty())
         <div class="empty-state">No suppliers have been added yet.</div>
     @else
-        <div class="table-wrap">
+        <div class="table-card table-wrap">
             <table>
                 <thead>
                     <tr>
-                        <th>Code</th>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>Items</th>
+                        <th>CODE</th>
+                        <th>SUPPLIER</th>
+                        <th>PHONE</th>
+                        <th>EMAIL</th>
+                        <th>ITEMS</th>
                     </tr>
                 </thead>
                 <tbody>

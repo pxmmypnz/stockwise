@@ -16,8 +16,8 @@ class ExampleTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('<title>Welcome to StockWise | StockWise</title>', false)
-            ->assertSee('A clearer view of your inventory starts here.')
+            ->assertSee('<title>Overview | StockWise</title>', false)
+            ->assertSee('Inventory at a glance')
             ->assertSee('css/app.css');
     }
 

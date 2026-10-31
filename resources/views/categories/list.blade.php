@@ -2,23 +2,29 @@
 
 @section('content')
     <div class="content-toolbar">
-        <p class="muted">Browse the categories used to organize inventory.</p>
+        <div>
+            <p class="section-kicker">INVENTORY ORGANIZATION</p>
+            <p class="section-description">Browse the categories used to organize inventory.</p>
+        </div>
         @can('create', \App\Models\Category::class)
-            <a class="button" href="{{ route('categories.create-form') }}">Add category</a>
+            <a class="button" href="{{ route('categories.create-form') }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                Add category
+            </a>
         @endcan
     </div>
 
     @if ($categories->isEmpty())
         <div class="empty-state">No categories have been added yet.</div>
     @else
-        <div class="table-wrap">
+        <div class="table-card table-wrap">
             <table>
                 <thead>
                     <tr>
-                        <th>Code</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Items</th>
+                        <th>CODE</th>
+                        <th>CATEGORY</th>
+                        <th>DESCRIPTION</th>
+                        <th>ITEMS</th>
                     </tr>
                 </thead>
                 <tbody>
