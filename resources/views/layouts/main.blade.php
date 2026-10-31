@@ -1,81 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
-    <title>Stock Manager</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <title>{{ $title }} | StockWise</title>
 </head>
 
 <body>
-
     <header class="site-header">
-        <nav>
-            <ul>
-                @auth
-                    <li @class(['active' => Route::is('items.*')])>
-                        <a href="{{ route('items.list') }}">Items</a>
-                    </li>
+        <nav class="site-nav" aria-label="Main navigation">
+            <a class="brand" href="{{ route('home') }}">StockWise</a>
 
-                    <li @class(['active' => Route::is('categories.*')])>
-                        <a href="{{ route('categories.list') }}">Categories</a>
-                    </li>
-
-                    <li @class(['active' => Route::is('suppliers.*')])>
-                        <a href="{{ route('suppliers.list') }}">Suppliers</a>
-                    </li>
-                @endauth
-                <li @class(['active' => Route::is('reports.*')])>
-                    <a href="{{ route('reports.low-stock') }}">
-                        Low-stock Report
+            <div class="nav-links">
+                @if (Route::has('items.list'))
+                    <a @class(['nav-link', 'active' => Route::is('items.*')]) href="{{ route('items.list') }}">
+                        Items
                     </a>
-                </li>
-            </ul>
-            <ul>
+                @endif
+
+                @if (Route::has('categories.list'))
+                    <a @class(['nav-link', 'active' => Route::is('categories.*')]) href="{{ route('categories.list') }}">
+                        Categories
+                    </a>
+                @endif
+
                 @auth
-                    <li>
-                        <span>Welcome, {{ auth()->user()->name }}</span>
-                    </li>
-                    <li>
+                    @if (Route::has('suppliers.list'))
+                        <a @class(['nav-link', 'active' => Route::is('suppliers.*')]) href="{{ route('suppliers.list') }}">
+                            Suppliers
+                        </a>
+                    @endif
+
+                    @if (Route::has('reports.low-stock'))
+                        <a @class(['nav-link', 'active' => Route::is('reports.*')]) href="{{ route('reports.low-stock') }}">
+                            Low-stock report
+                        </a>
+                    @endif
+                @endauth
+            </div>
+
+            <div class="nav-user">
+                @auth
+                    <span class="user-greeting">Welcome, {{ auth()->user()->name }}</span>
+                    @if (Route::has('logout'))
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit">Logout</button>
+                            <button class="button button-small button-outline" type="submit">Logout</button>
                         </form>
-                    </li>
+                    @endif
                 @else
-                    <li @class(['active' => Route::is('login')])>
-                        <a href="{{ route('login') }}">Login</a>
-                    </li>
+                    @if (Route::has('login'))
+                        <a @class(['nav-link', 'active' => Route::is('login')]) href="{{ route('login') }}">Login</a>
+                    @endif
                 @endauth
-            </ul>
+            </div>
         </nav>
     </header>
 
-    <main>
-        <h1>{{ $title }}</h1>
-
-        <div class="notifications">
-            @session('status')
-                <div role="status">
-                    {{ $value }}
-                </div>
-            @endsession
-
-            @error('alert')
-                <div role="alert">
-                    {{ $message }}
-                </div>
-            @enderror
+    <main class="page-shell">
+        <div class="page-heading">
+            <h1>{{ $title }}</h1>
         </div>
 
-        @yield('content')
+        @if (session()->has('status') || $errors->has('alert'))
+            <div class="notifications" aria-live="polite">
+                @session('status')
+                    <div class="flash flash-success" role="status">
+                        {{ $value }}
+                    </div>
+                @endsession
+
+                @error('alert')
+                    <div class="flash flash-error" role="alert">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+        @endif
+
+        <section class="page-content">
+            @yield('content')
+        </section>
     </main>
 
     <footer class="site-footer">
-        &copy; Stock Wise
+        <p>&copy; {{ date('Y') }} StockWise</p>
     </footer>
-
 </body>
 
 </html>

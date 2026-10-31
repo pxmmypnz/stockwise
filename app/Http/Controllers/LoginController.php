@@ -3,57 +3,41 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
-use Psr\Http\Message\ServerRequestInterface;
 
 class LoginController extends Controller
 {
-    function showForm(): View
+    public function showForm(): View
     {
         return view('logins.form');
     }
 
-    function authenticate(ServerRequestInterface $request): RedirectResponse
+    public function authenticate(Request $request): RedirectResponse
     {
-        $validator = Validator::make(
-            $request->getParsedBody(),
-            [
-                'email' => 'required',
-                'password' => 'required',
-            ],
-        );
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
 
-        if ($validator->passes()) {
-            if (Auth::attempt($validator->safe()->only(['email', 'password']))) {
-                // Regenerate the session ID after successful login
-                session()->regenerate();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-                // Redirect to the requested URL or products.index
-                return redirect()->intended(route('products.index'));
-            }
-
-            $validator->errors()->add(
-                'credentials',
-                'The provided credentials do not match our records.',
-            );
+            return redirect()->intended(route('items.list'));
         }
 
-        // Redirect back to login form with error messages
         return redirect()
             ->back()
-            ->withErrors($validator);
+            ->withInput($request->only('email'))
+            ->withErrors(['alert' => 'The email or password is incorrect.']);
     }
 
-    function logout(): RedirectResponse
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
-
-        session()->invalidate();
-
-        // Regenerate CSRF token
-        session()->regenerateToken();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect()->route('login');
     }
